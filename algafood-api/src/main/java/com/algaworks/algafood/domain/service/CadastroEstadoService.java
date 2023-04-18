@@ -17,12 +17,12 @@ public class CadastroEstadoService {
 	private EstadoRepository estadoRepository;
 	
 	public Estado cadastrarEstado(Estado estado) {
-		return estadoRepository.cadastrarEstado(estado);
+		return estadoRepository.save(estado);
 	}
 	
 	public void excluir(Long id) {
 		try {
-			estadoRepository.excluirEstado(id);
+			estadoRepository.findById(id);
 			
 		}catch (DataIntegrityViolationException e) {
 			throw new EntidadeEmUsoException(

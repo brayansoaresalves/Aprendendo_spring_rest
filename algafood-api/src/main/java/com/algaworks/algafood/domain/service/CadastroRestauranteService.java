@@ -33,12 +33,12 @@ public class CadastroRestauranteService {
 		
 		restaurante.setCozinha(cozinha);
 		
-		return restauranteRepository.salvar(restaurante);
+		return restauranteRepository.save(restaurante);
 	}
 	
 	public void remover(Long id) {
 		try {
-			restauranteRepository.remover(id);
+			restauranteRepository.findById(id);
 		}catch (EmptyResultDataAccessException ex) {
 			throw new EntidadeNaoEncontradaException(
 					String.format("O restaurante de codígo %d não foi encontrado", id)

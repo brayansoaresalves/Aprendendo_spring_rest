@@ -5,24 +5,22 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.algaworks.algafood.domain.model.Cozinha;
 import com.algaworks.algafood.domain.repository.CozinhaRepository;
 
 @RestController
-@RequestMapping("/teste")
+@RequestMapping("/testes")
 public class TesteController {
 	
 	@Autowired
 	private CozinhaRepository cozinhaRepository;
 	
 	@GetMapping("/cozinhas/por-nome")
-	public List<Cozinha> cozinhaPorNome(@RequestParam("nome") String nome){
-		return cozinhaRepository.consultarPorNome(nome);
+	public List<Cozinha> buscarPorNome(String nome){
+		return cozinhaRepository.findTodasByNome(nome);
 	}
 
- }
+}

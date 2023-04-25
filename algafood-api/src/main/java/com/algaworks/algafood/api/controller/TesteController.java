@@ -73,4 +73,14 @@ public class TesteController {
 		//return restauranteRepository.findAll(comFreteGratis().and(comNomeSemelhante(nome)));
 		return restauranteRepository.findComFreteGratis(nome);
 	}
+	
+	@GetMapping("restaurante/primeiro")
+	public Optional<Restaurante> restaurantePrimeiro(){
+		return restauranteRepository.buscarPrimeiro();
+	}
+	
+	@GetMapping("cozinha/primeira")
+	public Optional<Cozinha> cozinhaPrimeira(){
+		return cozinhaRepository.buscarPrimeiro();
+	}
 }

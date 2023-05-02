@@ -41,6 +41,7 @@ public class RestauranteController {
 	@GetMapping
 	public List<Restaurante> listar(){
 		return restauranteRepository.findAll();
+	
 	}
 	
 	@GetMapping("/{restauranteId}")
@@ -70,7 +71,8 @@ public class RestauranteController {
 		
 		try {
 			if (restauranteAtual.isPresent()) {
-				BeanUtils.copyProperties(restaurante, restauranteAtual.get(), "id", "formasPagamento", "endereco");
+				BeanUtils.copyProperties(restaurante, restauranteAtual.get(), "id", "formasPagamento", "endereco", 
+						"dataCadastro", "produtos");
 				Restaurante restauranteAtualizando = cadastroRestaurante.salvar(restauranteAtual.get());
 				return ResponseEntity.status(HttpStatus.OK).body(restauranteAtual.get());
 			}else {

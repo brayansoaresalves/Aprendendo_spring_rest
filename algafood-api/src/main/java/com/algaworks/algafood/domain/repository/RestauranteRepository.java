@@ -26,7 +26,7 @@ JpaSpecificationExecutor<Restaurante>{
 	Optional<Restaurante> findFirstRestauranteByNomeContaining(String nome);
 	
 	//@Query("from Restaurante where nome like %:nome% and cozinha.id = :id")
-	List<Restaurante> consultaPorNome(String nome,@Param("id") Long cozinhaId);
+	//List<Restaurante> consultaPorNome(String nome,@Param("id") Long cozinhaId);
 	
 	List<Restaurante> findTop2ByNomeContaining(String nome);
 	

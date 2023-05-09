@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.algaworks.algafood.api.model.CozinhasXmlWrapper;
 import com.algaworks.algafood.domain.exception.EntidadeEmUsoException;
@@ -104,7 +105,7 @@ public class CozinhaController {
 		
 		
 	}
-	
+	/*
 	@DeleteMapping("/{cozinhaId}")
 	public ResponseEntity<?> remover(@PathVariable Long cozinhaId){
 		try {
@@ -119,6 +120,26 @@ public class CozinhaController {
 			return ResponseEntity.status(HttpStatus.CONFLICT)
 					.body(e.getMessage());
 		}
-	}
+	}*/
 	
+	@DeleteMapping("/{cozinhaId}")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void remover(@PathVariable Long cozinhaId){
+
+		if (cozinhaRepository.existsById(cozinhaId)) {
+			cadastroCozinha.excluir(cozinhaId);
+		}else {
+			throw new EntidadeNaoEncontradaException("Entidadade não enconrada!!");
+		}
+
+	}
+
+	/*@DeleteMapping("/{cozinhaId}")
+	public ResponseEntity<?> remover(@PathVariable Long cozinhaId){
+		
+			return cozinhaRepository.findById(cozinhaId).map(record -> {
+				cadastroCozinha.excluir(cozinhaId);
+				return ResponseEntity.noContent().build();
+			}).orElse(ResponseEntity.notFound().build());
+	}*/
 }

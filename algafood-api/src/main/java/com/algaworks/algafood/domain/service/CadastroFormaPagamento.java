@@ -5,6 +5,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import com.algaworks.algafood.domain.exception.EntidadeNaoEncontradaException;
+import com.algaworks.algafood.domain.exception.FormaPagamentoNaoEncotradaException;
 import com.algaworks.algafood.domain.model.Forma_Pagamento;
 import com.algaworks.algafood.domain.repository.Forma_PagamentoRepository;
 
@@ -22,11 +23,12 @@ public class CadastroFormaPagamento {
 		try {
 			formaPagamentoRepository.deleteById(id);
 		}catch (EmptyResultDataAccessException ex) {
-			throw new EntidadeNaoEncontradaException(
-					String.format("Não existe o codigo %d para pagamento", id)
-					);
+			throw new FormaPagamentoNaoEncotradaException(id);
 		}
 	}
 	
-
+	public Forma_Pagamento buscarOuFalhar(Long formaId) {
+		return formaPagamentoRepository.findById(formaId).orElseThrow(
+				()-> new FormaPagamentoNaoEncotradaException(formaId));
+	}
 }

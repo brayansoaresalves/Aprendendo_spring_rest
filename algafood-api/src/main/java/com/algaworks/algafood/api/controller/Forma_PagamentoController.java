@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.algaworks.algafood.domain.exception.EntidadeNaoEncontradaException;
@@ -37,43 +38,31 @@ public class Forma_PagamentoController {
 	}
 	
 	@GetMapping("/{pagamentoId}")
-	public ResponseEntity<Forma_Pagamento> buscarPagamento(@PathVariable Long pagamentoId){
-		Optional<Forma_Pagamento> pagamentos = pagamentoRepository.findById(pagamentoId);
-		
-		if (!pagamentos.isPresent()) {
-			return ResponseEntity.notFound().build();
-		}
-		
-		return ResponseEntity.ok(pagamentos.get());
+	public Forma_Pagamento buscarPagamento(@PathVariable Long pagamentoId){
+		return cadastroPagamento.buscarOuFalhar(pagamentoId);
 	}
 	
 	@PostMapping
-	public ResponseEntity<Forma_Pagamento> aderindoPagamento(@RequestBody Forma_Pagamento pagamento){
-		pagamento = cadastroPagamento.cadastrar(pagamento);
-		return ResponseEntity.status(HttpStatus.CREATED).body(pagamento);
+	@ResponseStatus(HttpStatus.CREATED)
+	public Forma_Pagamento aderindoPagamento(@RequestBody Forma_Pagamento pagamento){
+		return cadastroPagamento.cadastrar(pagamento);
 	}
 	
 	@PutMapping("/{pagamentoId}")
-	public ResponseEntity<?> atualizarPagamento(@RequestBody Forma_Pagamento pagamento, @PathVariable Long pagamentoId){
-		Optional<Forma_Pagamento> pagamentos = pagamentoRepository.findById(pagamentoId);
+	public Forma_Pagamento atualizarPagamento(@RequestBody Forma_Pagamento pagamento, @PathVariable Long pagamentoId){
+		Forma_Pagamento pagamentos = cadastroPagamento.buscarOuFalhar(pagamentoId);
 		
-		if (pagamentos.isPresent()) {
-			BeanUtils.copyProperties(pagamento, pagamentos.get(), "id");
-			cadastroPagamento.cadastrar(pagamentos.get());
-			return ResponseEntity.ok(pagamentos.get());
-		}
-		
-		return ResponseEntity.notFound().build();
+		BeanUtils.copyProperties(pagamento, pagamentos, "id");
+		return cadastroPagamento.cadastrar(pagamentos);
+			
+	
 	}
 	
 	@DeleteMapping("/{pagamentoId}")
-	public ResponseEntity<Forma_Pagamento> excluirPagamento(@PathVariable Long pagamentoId){
-		try {
-			cadastroPagamento.deletar(pagamentoId);
-			return ResponseEntity.noContent().build();
-		}catch (EntidadeNaoEncontradaException ex) {
-			return ResponseEntity.notFound().build();
-		}
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void excluirPagamento(@PathVariable Long pagamentoId){
+		
+		cadastroPagamento.deletar(buscarPagamento(pagamentoId).getId());
 	}
 
 }

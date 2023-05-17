@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.algaworks.algafood.domain.exception.EntidadeNaoEncontradaException;
@@ -39,42 +40,33 @@ public class PermissaoController {
 	}
 	
 	@GetMapping("/{permissaoId}")
-	public ResponseEntity<Permissao> localizar(@PathVariable Long permissaoId){
-		Optional<Permissao> permissaoConcedida = permissaoRepository.findById(permissaoId);
-		
-		if (!permissaoConcedida.isPresent()) {
-			return ResponseEntity.notFound().build();
-		}
-		
-		return ResponseEntity.ok(permissaoConcedida.get());
+	public Permissao localizar(@PathVariable Long permissaoId){
+		return cadastrarPermissao.buscarOuFalhar(permissaoId);
 	}
 	
 	@PostMapping
-	public ResponseEntity<Permissao> concederPermissao(@RequestBody Permissao permissao){
-		permissao = cadastrarPermissao.salvar(permissao);
-		return ResponseEntity.status(HttpStatus.CREATED).body(permissao);
+	@ResponseStatus(HttpStatus.CREATED)
+	public Permissao concederPermissao(@RequestBody Permissao permissao){
+		return cadastrarPermissao.salvar(permissao);
 	}
 	
 	@PutMapping("/{permissaoId}")
-	public ResponseEntity<?> atualizarPermissao(@RequestBody Permissao permissao, @PathVariable Long permissaoId){
-		Optional<Permissao> outraPermissao = permissaoRepository.findById(permissaoId);
+	public Permissao atualizarPermissao(@RequestBody Permissao permissao, @PathVariable Long permissaoId){
+		Permissao outraPermissao = cadastrarPermissao.buscarOuFalhar(permissaoId);
+
+		BeanUtils.copyProperties(permissao, outraPermissao, "id");
+		return cadastrarPermissao.salvar(outraPermissao);
 		
-		if (outraPermissao.isPresent()) {
-			BeanUtils.copyProperties(permissao, outraPermissao.get(), "id");
-			Permissao permissaoSalva = cadastrarPermissao.salvar(outraPermissao.get());
-			return ResponseEntity.ok(outraPermissao.get());
-		}
-		return ResponseEntity.notFound().build();
+
 	}
 	
 	@DeleteMapping("/{permissaoId}")
-	public ResponseEntity<Permissao> tirarPermissao(@PathVariable Long permissaoId){
-		try {
-			cadastrarPermissao.excluir(permissaoId);
-			return ResponseEntity.noContent().build();
-		}catch (EntidadeNaoEncontradaException ex) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-		}
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void tirarPermissao(@PathVariable Long permissaoId){
+
+		cadastrarPermissao.excluir(localizar(permissaoId).getId());
+
+
 	}
 
 }

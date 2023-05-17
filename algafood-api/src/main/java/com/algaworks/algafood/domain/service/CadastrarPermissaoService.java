@@ -8,6 +8,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import com.algaworks.algafood.domain.exception.EntidadeNaoEncontradaException;
+import com.algaworks.algafood.domain.exception.PermissaoNaoEncontradaException;
 import com.algaworks.algafood.domain.model.Permissao;
 import com.algaworks.algafood.domain.repository.PermissaoRepository;
 
@@ -26,10 +27,13 @@ public class CadastrarPermissaoService {
 		try {
 			permissaoRepository.deleteById(id);
 		}catch (EmptyResultDataAccessException ex) {
-			throw new EntidadeNaoEncontradaException(
-					String.format("A exclusão da permissão do codigo %d não existe!", id)
-					);
+			throw new PermissaoNaoEncontradaException(id);
 		}
+	}
+	
+	public Permissao buscarOuFalhar(Long permissaoId) {
+		return permissaoRepository.findById(permissaoId).orElseThrow(
+				() -> new PermissaoNaoEncontradaException(permissaoId));
 	}
 
 }

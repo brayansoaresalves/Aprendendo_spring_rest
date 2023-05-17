@@ -1,13 +1,10 @@
 package com.algaworks.algafood.api.controller;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,13 +14,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 
-import com.algaworks.algafood.domain.exception.EntidadeEmUsoException;
-import com.algaworks.algafood.domain.exception.EntidadeNaoEncontradaException;
+import com.algaworks.algafood.domain.exception.EstadoNaoEncontradoException;
+import com.algaworks.algafood.domain.exception.NegocioException;
 import com.algaworks.algafood.domain.model.Cidades;
 import com.algaworks.algafood.domain.repository.CidadeRepository;
-import com.algaworks.algafood.domain.repository.CozinhaRepository;
 import com.algaworks.algafood.domain.service.CadastrarCidadeService;
 
 @RestController
@@ -42,56 +37,45 @@ public class CidadeController {
 	}
 	
 	@GetMapping("/{cidadeId}")
-	public ResponseEntity<Cidades> buscarCidade(@PathVariable Long cidadeId) {
-		Optional<Cidades> cidade = cidadeRepository.findById(cidadeId);
-		
-		if (!cidade.isPresent()) {
-			return ResponseEntity.notFound().build();
-		}
-		
-		return ResponseEntity.ok().body(cidade.get());
+	public Cidades buscarCidade(@PathVariable Long cidadeId) {
+		return cadastroCidade.buscarOuFalhar(cidadeId);
+
 	}
 	
 	@PostMapping
-	public ResponseEntity<?> salvar(@RequestBody Cidades cidade){
+	@ResponseStatus(HttpStatus.CREATED)
+	public Cidades salvar(@RequestBody Cidades cidade){
 		try {
-			cidade = cadastroCidade.cadastrar(cidade);
-			return ResponseEntity.status(HttpStatus.CREATED).body(cidade);
-		}catch (EntidadeNaoEncontradaException ex) {
-			return ResponseEntity.badRequest().body(ex.getMessage());
+			return cadastroCidade.cadastrar(cidade);
+		}catch (EstadoNaoEncontradoException ex) {
+			throw new NegocioException(ex.getMessage(), ex);
 		}
+		
 	}
 	
 	
 	@PutMapping("/{cidadeId}")
-	public ResponseEntity<?> atualizar(@RequestBody Cidades cidade, @PathVariable Long cidadeId){
-		Optional<Cidades> cidadeAtualizada = cidadeRepository.findById(cidadeId);
+	public Cidades atualizar(@RequestBody Cidades cidade, @PathVariable Long cidadeId){
 		
 		try {
-			if (cidadeAtualizada.isPresent()) {
-				BeanUtils.copyProperties(cidade, cidadeAtualizada.get(), "id");
-				Cidades cidadeSalva = cadastroCidade.cadastrar(cidadeAtualizada.get());
-				return ResponseEntity.ok(cidadeSalva);
-			}
 			
-			return ResponseEntity.notFound().build();
-		}catch (EntidadeNaoEncontradaException ex) {
-			return ResponseEntity.badRequest().body(ex.getMessage());
+			Cidades cidadeAtualizada = cadastroCidade.buscarOuFalhar(cidadeId);
+
+			BeanUtils.copyProperties(cidade, cidadeAtualizada, "id");
+			
+			return cadastroCidade.cadastrar(cidadeAtualizada);
+		}catch (EstadoNaoEncontradoException ex) {
+			throw new NegocioException(ex.getMessage(), ex);
 		}
+		
+		
 		
 	}
 	
 	@DeleteMapping("/{cidadeId}")
-	public ResponseEntity<?> excluir(@PathVariable Long cidadeId){
-		try {
-			
-			cadastroCidade.excluir(cidadeId);
-			return ResponseEntity.noContent().build();
-		}catch (EntidadeEmUsoException ex1) {
-			return ResponseEntity.status(HttpStatus.CONFLICT).body(ex1.getMessage());
-		}catch (EntidadeNaoEncontradaException ex1) {
-			return ResponseEntity.notFound().build();
-		}
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void excluir(@PathVariable Long cidadeId){
+		cadastroCidade.excluir(buscarCidade(cidadeId).getId());
 	}
 
 }

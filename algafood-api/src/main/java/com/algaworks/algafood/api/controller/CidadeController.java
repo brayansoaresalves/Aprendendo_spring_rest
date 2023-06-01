@@ -2,6 +2,8 @@ package com.algaworks.algafood.api.controller;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -44,7 +46,7 @@ public class CidadeController {
 	
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public Cidades salvar(@RequestBody Cidades cidade){
+	public Cidades salvar(@RequestBody @Valid Cidades cidade){
 		try {
 			return cadastroCidade.cadastrar(cidade);
 		}catch (EstadoNaoEncontradoException ex) {
@@ -55,7 +57,7 @@ public class CidadeController {
 	
 	
 	@PutMapping("/{cidadeId}")
-	public Cidades atualizar(@RequestBody Cidades cidade, @PathVariable Long cidadeId){
+	public Cidades atualizar(@RequestBody @Valid Cidades cidade, @PathVariable Long cidadeId){
 		
 		try {
 			

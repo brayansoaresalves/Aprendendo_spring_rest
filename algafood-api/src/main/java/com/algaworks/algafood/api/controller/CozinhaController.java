@@ -3,6 +3,8 @@ package com.algaworks.algafood.api.controller;
 import java.util.List;
 import java.util.Optional;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
@@ -77,14 +79,14 @@ public class CozinhaController {
 	
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public Cozinha adicionar(@RequestBody Cozinha cozinha) {
+	public Cozinha adicionar(@RequestBody @Valid Cozinha cozinha) {
 		return cadastroCozinha.salvar(cozinha);
 
 		
 	}
 	
 	@PutMapping("/{cozinhaId}")
-	public Cozinha atualizar (@RequestBody Cozinha cozinha,@PathVariable Long cozinhaId){
+	public Cozinha atualizar (@RequestBody @Valid Cozinha cozinha,@PathVariable Long cozinhaId){
 		Cozinha cozinhaAtual = cadastroCozinha.buscarOuFalhar(cozinhaId);
 		
 			BeanUtils.copyProperties(cozinha, cozinhaAtual, "id");

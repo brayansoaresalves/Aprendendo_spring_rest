@@ -25,7 +25,7 @@ import javax.validation.groups.ConvertGroup;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import com.algaworks.algafood.Groups;
+import com.algaworks.algafood.core.validation.Groups;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.ser.std.StdKeySerializers.Default;
 
@@ -47,7 +47,7 @@ public class Restaurante {
 	private String nome;
 	
 	//@DecimalMin("0")
-	@PositiveOrZero
+	@PositiveOrZero //(message = "{TaxaFrete.invalida}")
 	@Column(nullable = false)
 	private BigDecimal taxaFrete;
 	

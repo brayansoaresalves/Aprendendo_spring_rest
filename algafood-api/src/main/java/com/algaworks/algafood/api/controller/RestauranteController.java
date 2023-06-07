@@ -16,6 +16,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.util.ReflectionUtils;
+import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.SmartValidator;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,6 +30,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.algaworks.algafood.api.exceptionhandler.ApiExceptionHandler;
+import com.algaworks.algafood.api.exceptionhandler.ValidacaoException;
 import com.algaworks.algafood.core.validation.Groups;
 import com.algaworks.algafood.domain.exception.EntidadeEmUsoException;
 import com.algaworks.algafood.domain.exception.EntidadeNaoEncontradaException;
@@ -48,6 +52,9 @@ public class RestauranteController {
 	
 	@Autowired
 	private CadastroRestauranteService cadastroRestaurante;
+	
+	@Autowired
+	private SmartValidator validator;
 	
 	@GetMapping
 	public List<Restaurante> listar(){
@@ -99,8 +106,22 @@ public class RestauranteController {
 		Restaurante restauranteAtual = cadastroRestaurante.buscarOuFalhar(id);
 		
 		merge(campos, restauranteAtual, request);
+		validate(restauranteAtual, "restaurante");
 		
 		return atualizar(restauranteAtual, id);
+	}
+
+	private void validate(Restaurante restaurante, String objectName) {
+		// TODO Auto-generated method stub
+		
+		BeanPropertyBindingResult bindResult = new BeanPropertyBindingResult(restaurante, objectName);
+		
+		validator.validate(restaurante, bindResult);
+		
+		if (bindResult.hasErrors()) {
+			throw new ValidacaoException(bindResult);
+		}
+		
 	}
 
 	private void merge(Map<String, Object> camposOrigem, Restaurante restauranteDestino, HttpServletRequest request) {

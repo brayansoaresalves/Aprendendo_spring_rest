@@ -51,7 +51,7 @@ public class Restaurante {
 	private String nome;
 	
 	//@DecimalMin("0")
-	//@PositiveOrZero //(message = "{TaxaFrete.invalida}")
+	@PositiveOrZero //(message = "{TaxaFrete.invalida}")
 	//@Multiplo(numero = 5)
 	@Column(nullable = false)
 	private BigDecimal taxaFrete;

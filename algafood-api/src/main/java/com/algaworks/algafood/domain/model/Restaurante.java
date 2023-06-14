@@ -26,11 +26,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import com.algaworks.algafood.core.validation.Groups;
-import com.algaworks.algafood.core.validation.Multiplo;
-import com.algaworks.algafood.core.validation.TaxaFrete;
 import com.algaworks.algafood.core.validation.ValorZeroIncluiDescricao;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.ser.std.StdKeySerializers.Default;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -65,25 +61,20 @@ public class Restaurante {
 	@JoinColumn(name = "cozinha_codigo", nullable = false)
 	private Cozinha cozinha;
 	
-	@JsonIgnore
 	@OneToMany(mappedBy = "restaurante")
 	private List<Produto> produtos = new ArrayList<>();
 	
-	@JsonIgnore
 	@Embedded
 	private Endereco endereco;
 	
-	@JsonIgnore
 	@CreationTimestamp
 	@Column(nullable = false, columnDefinition = "datetime")
 	private LocalDateTime dataCadastro;
 	
-	@JsonIgnore
 	@UpdateTimestamp
 	@Column(nullable = false, columnDefinition = "datetime")
 	private LocalDateTime dataAtualizacao;
 	
-	@JsonIgnore
 	@ManyToMany
 	@JoinTable(name = "restaurante_forma_pagamento", joinColumns = @JoinColumn(name = "restaurante_id"), 
 	inverseJoinColumns = @JoinColumn(name = "forma_pagamento_id"))

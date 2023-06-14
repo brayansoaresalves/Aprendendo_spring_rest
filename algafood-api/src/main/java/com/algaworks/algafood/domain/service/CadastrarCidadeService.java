@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.algaworks.algafood.domain.exception.CidadeNaoEncontradaException;
 import com.algaworks.algafood.domain.exception.EntidadeEmUsoException;
@@ -27,6 +28,7 @@ public class CadastrarCidadeService {
 	@Autowired
 	private CadastroEstadoService cadastroEstado;
 	
+	@Transactional
 	public Cidades cadastrar(Cidades cidades) {
 		
 		Long estadoId = cidades.getEstado().getId();
@@ -37,7 +39,7 @@ public class CadastrarCidadeService {
 		return cidadeRepository.save(cidades);
 		
 	}
-	
+	@Transactional
 	public void excluir(Long id) {
 		try {
 			cidadeRepository.deleteById(id);

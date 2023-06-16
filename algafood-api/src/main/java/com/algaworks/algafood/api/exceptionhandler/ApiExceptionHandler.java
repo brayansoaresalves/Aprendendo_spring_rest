@@ -1,6 +1,7 @@
 package com.algaworks.algafood.api.exceptionhandler;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -62,7 +63,6 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler{
 	    				.build();}).collect(Collectors.toList());
 	        
 	    Problem problem = createProblemBuilder(status, problemType, detail)
-	    	.timeStamp(LocalDateTime.now())
 	        .userMessage(detail)
 	        .objects(problemObjects)
 	        .build();
@@ -90,7 +90,6 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler{
 		ProblemType problemType = ProblemType.ERRO_DO_SISTEMA;
 		String detail = MSG_ERRO_GENERICA_USUARIO_FINAL;
 		Problem problem = createProblemBuilder(status, problemType, detail)
-				.timeStamp(LocalDateTime.now())
 				.build();
 		
 		return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
@@ -106,7 +105,6 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler{
 	    
 	    Problem problem = createProblemBuilder(status, problemType, detail)
 	    		.userMessage(MSG_ERRO_GENERICA_USUARIO_FINAL)
-	    		.timeStamp(LocalDateTime.now())
 	    		.build();
 	    
 	    return handleExceptionInternal(ex, problem, headers, status, request);
@@ -136,7 +134,6 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler{
 
 	    Problem problem = createProblemBuilder(status, problemType, detail)
 	    		.userMessage(MSG_ERRO_GENERICA_USUARIO_FINAL)
-	    		.timeStamp(LocalDateTime.now())
 	    		.build();
 
 	    return handleExceptionInternal(ex, problem, headers, status, request);
@@ -158,7 +155,6 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler{
 		
 		Problem problem = createProblemBuilder(status, problemType, detail)
 				.userMessage(MSG_ERRO_GENERICA_USUARIO_FINAL)
-				.timeStamp(LocalDateTime.now())
 				.build();
 		
 		return handleExceptionInternal(ex, problem, headers, status, request);
@@ -174,7 +170,6 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler{
 		            + "Corrija ou remova essa propriedade e tente novamente.", path);
 		Problem problem = createProblemBuilder(status, problemType, detail)
 				.userMessage(MSG_ERRO_GENERICA_USUARIO_FINAL)
-				.timeStamp(LocalDateTime.now())
 				.build();
 		
 		return handleExceptionInternal(ex, problem, headers, status, request);
@@ -194,7 +189,6 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler{
 		
 		Problem problem = createProblemBuilder(status, problemType, detail)
 				.userMessage(MSG_ERRO_GENERICA_USUARIO_FINAL)
-				.timeStamp(LocalDateTime.now())
 				.build();
 		
 		return handleExceptionInternal(ex, problem, headers, status, request);
@@ -209,7 +203,6 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler{
 		String detail = ex.getMessage();
 		
 		Problem problema = createProblemBuilder(status, problemType, detail)
-				.timeStamp(LocalDateTime.now())
 				.build();
 		
 		/*Problem problema = Problem.builder().status(status.value()).type("https://algafood.com.br/entidade-nao-encontrada")
@@ -228,7 +221,6 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler{
 		String detail = ex.getMessage();
 		
 		Problem problema = createProblemBuilder(status, problemType, detail)
-				.timeStamp(LocalDateTime.now())
 				.build();
 		
 		
@@ -251,7 +243,6 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler{
 		
 		Problem problema = createProblemBuilder(status, problemType, detail)
 				.userMessage(MSG_ERRO_GENERICA_USUARIO_FINAL)
-				.timeStamp(LocalDateTime.now())
 				.build();
 		
 		return handleExceptionInternal(ex, problema, new HttpHeaders(), status , request);
@@ -265,12 +256,10 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler{
 		if (body == null) {
 			body = Problem.builder().title(status.getReasonPhrase()).
 					status(status.value()).userMessage(MSG_ERRO_GENERICA_USUARIO_FINAL).
-					timeStamp(LocalDateTime.now()).
 					build();
 		}else if (body instanceof String) {
 			body = Problem.builder().title((String) body).status(status.value())
 					.userMessage(MSG_ERRO_GENERICA_USUARIO_FINAL)
-					.timeStamp(LocalDateTime.now())
 					.build();
 		}
 		return super.handleExceptionInternal(ex, body, headers,status , request);
@@ -278,6 +267,6 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler{
 	
 	private Problem.ProblemBuilder createProblemBuilder(HttpStatus status, ProblemType problemType, String detail) {
 		return Problem.builder().status(status.value()).type(problemType.getUri()).title(problemType.getTitle()).
-				detail(detail);
+				detail(detail).timeStamp(OffsetDateTime.now());
 	}
 }

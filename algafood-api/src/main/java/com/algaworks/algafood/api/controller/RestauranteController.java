@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.algaworks.algafood.api.assembler.RestauranteInputDisassembler;
+import com.algaworks.algafood.api.assembler.RestauranteModelAssembler;
 import com.algaworks.algafood.api.model.CozinhaDTO;
 import com.algaworks.algafood.api.model.RestauranteDTO;
 import com.algaworks.algafood.api.model.input.RestauranteInput;
@@ -42,9 +44,15 @@ public class RestauranteController {
 	@Autowired
 	private SmartValidator validator;
 	
+	@Autowired
+	private RestauranteModelAssembler restauranteAssembler;
+	
+	@Autowired
+	private RestauranteInputDisassembler restauranteInputDisassembler;
+	
 	@GetMapping
 	public List<RestauranteDTO> listar(){
-		return toCollectionModel(restauranteRepository.findAll());
+		return restauranteAssembler.toCollectionModel(restauranteRepository.findAll());
 	
 	}
 	
@@ -52,35 +60,8 @@ public class RestauranteController {
 	public RestauranteDTO buscarPorId(@PathVariable Long restauranteId){
 		Restaurante restaurante =  cadastroRestaurante.buscarOuFalhar(restauranteId);
 
-		return toModel(restaurante);
+		return restauranteAssembler.toModel(restaurante);
 
-	}
-
-	private RestauranteDTO toModel(Restaurante restaurante) {
-		RestauranteDTO restauranteModel = new RestauranteDTO();
-		restauranteModel.setId(restaurante.getId());
-		restauranteModel.setNome(restaurante.getNome());
-		restauranteModel.setTaxaFrete(restaurante.getTaxaFrete());
-		CozinhaDTO cozinhaDTO = new CozinhaDTO();
-		cozinhaDTO.setId(restaurante.getCozinha().getId());
-		cozinhaDTO.setNome(restaurante.getCozinha().getNome());
-		restauranteModel.setCozinha(cozinhaDTO);
-		return restauranteModel;
-	}
-	
-	private List<RestauranteDTO> toCollectionModel(List<Restaurante> restaurantes){
-		return restaurantes.stream().map(restaurante -> toModel(restaurante)).collect(Collectors.toList());
-	}
-	
-	private Restaurante toDomainObject(RestauranteInput restauranteInput) {
-		Restaurante restaurante = new Restaurante();
-		restaurante.setNome(restauranteInput.getNome());
-		restaurante.setTaxaFrete(restauranteInput.getTaxaFrete());
-		Cozinha cozinha = new Cozinha();
-		cozinha.setId(restauranteInput.getCozinha().getId());
-		restaurante.setCozinha(cozinha);
-		
-		return restaurante;
 	}
 	
 	@PostMapping
@@ -88,9 +69,9 @@ public class RestauranteController {
 	public RestauranteDTO adicionar(@RequestBody @Valid RestauranteInput restauranteInput){
 		try {
 			
-			Restaurante restaurante = toDomainObject(restauranteInput);
+			Restaurante restaurante = restauranteInputDisassembler.toDomainObject(restauranteInput);
 			
-			return toModel(cadastroRestaurante.salvar(restaurante));
+			return restauranteAssembler.toModel(cadastroRestaurante.salvar(restaurante));
 		}catch (EntidadeNaoEncontradaException e) {
 			throw new NegocioException(e.getMessage());
 		}
@@ -99,14 +80,20 @@ public class RestauranteController {
 	
 	@PutMapping("/{id}")
 	public RestauranteDTO atualizar(@RequestBody @Valid RestauranteInput restauranteInput, @PathVariable Long id){
-		Restaurante restaurante = toDomainObject(restauranteInput);
-		Restaurante restauranteAtual = cadastroRestaurante.buscarOuFalhar(id); 
+		//Restaurante restaurante = restauranteInputDisassembler.toDomainObject(restauranteInput);
+		
 
 		
-		BeanUtils.copyProperties(restaurante, restauranteAtual, "id", "formasPagamento", "endereco", 
-						"dataCadastro", "produtos");
+		/*BeanUtils.copyProperties(restaurante, restauranteAtual, "id", "formasPagamento", "endereco", 
+						"dataCadastro", "produtos");*/
 		try {
-			return toModel(cadastroRestaurante.salvar(restauranteAtual));
+			
+			Restaurante restauranteAtual = cadastroRestaurante.buscarOuFalhar(id); 
+			
+			restauranteInputDisassembler.copyToDomainObject(restauranteInput, restauranteAtual);
+			
+			
+			return restauranteAssembler.toModel(cadastroRestaurante.salvar(restauranteAtual));
 		}catch (EntidadeNaoEncontradaException e) {
 			throw new NegocioException(e.getMessage());
 		}

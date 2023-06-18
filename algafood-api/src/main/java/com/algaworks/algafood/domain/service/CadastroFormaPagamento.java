@@ -23,6 +23,7 @@ public class CadastroFormaPagamento {
 	public void deletar(Long id) {
 		try {
 			formaPagamentoRepository.deleteById(id);
+			formaPagamentoRepository.flush();
 		}catch (EmptyResultDataAccessException ex) {
 			throw new FormaPagamentoNaoEncotradaException(id);
 		}

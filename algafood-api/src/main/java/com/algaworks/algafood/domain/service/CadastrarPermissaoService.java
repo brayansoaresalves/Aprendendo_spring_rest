@@ -28,6 +28,7 @@ public class CadastrarPermissaoService {
 	public void excluir(Long id) {
 		try {
 			permissaoRepository.deleteById(id);
+			permissaoRepository.flush();
 		}catch (EmptyResultDataAccessException ex) {
 			throw new PermissaoNaoEncontradaException(id);
 		}

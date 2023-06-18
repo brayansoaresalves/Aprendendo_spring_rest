@@ -19,9 +19,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.algaworks.algafood.api.assembler.EstadoInputDisassembler;
+import com.algaworks.algafood.api.assembler.EstadoModelAssembler;
+import com.algaworks.algafood.api.model.EstadoDTO;
+import com.algaworks.algafood.api.model.input.EstadoIdInput;
+import com.algaworks.algafood.api.model.input.EstadoInput;
 import com.algaworks.algafood.domain.exception.EntidadeEmUsoException;
 import com.algaworks.algafood.domain.exception.EntidadeNaoEncontradaException;
+import com.algaworks.algafood.domain.exception.NegocioException;
 import com.algaworks.algafood.domain.model.Estado;
+import com.algaworks.algafood.domain.model.Restaurante;
 import com.algaworks.algafood.domain.repository.EstadoRepository;
 import com.algaworks.algafood.domain.service.CadastroEstadoService;
 
@@ -33,30 +40,51 @@ public class EstadoController {
 	private EstadoRepository estadoRepository;
 	
 	@Autowired
-	public CadastroEstadoService cadastroEstado;
+	private CadastroEstadoService cadastroEstado;
+	
+	@Autowired
+	private EstadoInputDisassembler estadoInputDisassembler;
+	
+	@Autowired
+	private EstadoModelAssembler estadoModelAssembler;
 	
 	@GetMapping
-	public List<Estado> listar(){
-		return estadoRepository.findAll();
+	public List<EstadoDTO> listar(){
+		return estadoModelAssembler.toCollectionModel(estadoRepository.findAll());
 	}
 	
 	@GetMapping("/{id}")
-	public Estado buscar(@PathVariable Long id){
-		return cadastroEstado.buscarOuFalhar(id);
+	public EstadoDTO buscar(@PathVariable Long id){
+		Estado estado = cadastroEstado.buscarOuFalhar(id);
+		
+		return estadoModelAssembler.toModel(estado);
 	}
 	
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public Estado salvar(@RequestBody @Valid Estado estado) {
-		return cadastroEstado.cadastrarEstado(estado);
+	public EstadoDTO salvar(@RequestBody @Valid EstadoInput estadoInput) {
+		
+		try {
+			Estado estado = estadoInputDisassembler.toDomainObject(estadoInput);
+			
+			return estadoModelAssembler.toModel(cadastroEstado.cadastrarEstado(estado));
+		}catch (EntidadeNaoEncontradaException e) {
+			throw new NegocioException(e.getMessage());
+		}
+		
 	}
 	
 	@PutMapping("/{estadoId}")
-	public Estado atualizar(@RequestBody @Valid Estado estado, @PathVariable Long estadoId){
-		Estado estadoAtual = cadastroEstado.buscarOuFalhar(estadoId);
-		
-		BeanUtils.copyProperties(estado, estadoAtual, "id");
-		return cadastroEstado.cadastrarEstado(estadoAtual);
+	public EstadoDTO atualizar(@RequestBody @Valid EstadoInput estadoInput, @PathVariable Long estadoId){
+		try {
+			
+			Estado estadoAtual = cadastroEstado.buscarOuFalhar(estadoId);
+			estadoInputDisassembler.copyToDomainObject(estadoAtual, estadoInput);
+			return estadoModelAssembler.toModel(estadoAtual);
+			
+		}catch (EntidadeNaoEncontradaException ex) {
+			throw new NegocioException(ex.getMessage());
+		}
 		
 	}
 	

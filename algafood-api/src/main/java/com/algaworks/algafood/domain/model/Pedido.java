@@ -47,7 +47,7 @@ import lombok.EqualsAndHashCode;
 	    
 	    @ManyToOne
 	    @JoinColumn(nullable = false)
-	    private Forma_Pagamento formaPagamento;
+	    private FormaPagamento formaPagamento;
 	    
 	    @ManyToOne
 	    @JoinColumn(nullable = false)

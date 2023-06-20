@@ -42,11 +42,11 @@ insert into cidades (nome, estado_id) values ('CACHOEIRA DOURADA', 1);
 insert into cidades (nome, estado_id) values ('UBERLÃNDIA', 2);
 insert into cidades (nome, estado_id) values ('MATÃO', 3);
 
-insert into restaurante (nome, taxa_frete, cozinha_codigo, data_cadastro, data_atualizacao, endereco_cidade_id, endereco_cep, endereco_logradouro, endereco_numero, endereco_bairro) values ('Thai Gourmet', 4, 1, utc_timestamp, utc_timestamp, 1, '38400-999', 'Rua João Pinheiro', '1000', 'Centro');
-insert into restaurante (nome, taxa_frete, cozinha_codigo, data_cadastro, data_atualizacao) values ('Thai Delivery', 9.50, 1, utc_timestamp, utc_timestamp);
-insert into restaurante (nome, taxa_frete, cozinha_codigo, data_cadastro, data_atualizacao) values ('Tuk Tuk Comida Indiana', 15, 2, utc_timestamp, utc_timestamp);
-insert into restaurante (nome, taxa_frete, cozinha_codigo, data_cadastro, data_atualizacao) values ('YUKIHIRA', 6.12, 4, utc_timestamp, utc_timestamp);
-insert into restaurante (nome, taxa_frete, cozinha_codigo, data_cadastro, data_atualizacao) values ('TADOKORO', 11.0, 5, utc_timestamp, utc_timestamp);
+insert into restaurante (nome, taxa_frete, cozinha_codigo, data_cadastro, data_atualizacao,ativo, endereco_cidade_id, endereco_cep, endereco_logradouro, endereco_numero, endereco_bairro) values ('Thai Gourmet', 4, 1, utc_timestamp, utc_timestamp, true, 1, '38400-999', 'Rua João Pinheiro', '1000', 'Centro');
+insert into restaurante (nome, taxa_frete, cozinha_codigo, data_cadastro, data_atualizacao, ativo) values ('Thai Delivery', 9.50, 1, utc_timestamp, utc_timestamp, true);
+insert into restaurante (nome, taxa_frete, cozinha_codigo, data_cadastro, data_atualizacao, ativo) values ('Tuk Tuk Comida Indiana', 15, 2, utc_timestamp, utc_timestamp, true);
+insert into restaurante (nome, taxa_frete, cozinha_codigo, data_cadastro, data_atualizacao, ativo) values ('YUKIHIRA', 6.12, 4, utc_timestamp, utc_timestamp, true);
+insert into restaurante (nome, taxa_frete, cozinha_codigo, data_cadastro, data_atualizacao, ativo) values ('TADOKORO', 11.0, 5, utc_timestamp, utc_timestamp, true);
 
 insert into forma_pagamento (descricao) values ('A VISTA');
 insert into forma_pagamento (descricao) values ('DINHEIRO');

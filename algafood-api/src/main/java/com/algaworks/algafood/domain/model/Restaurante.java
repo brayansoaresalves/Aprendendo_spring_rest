@@ -42,22 +42,14 @@ public class Restaurante {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	@NotBlank
 	@Column(nullable = false)
 	private String nome;
 	
-	//@DecimalMin("0")
-	@PositiveOrZero //(message = "{TaxaFrete.invalida}")
-	//@Multiplo(numero = 5)
 	@Column(nullable = false)
 	private BigDecimal taxaFrete;
 	
-	//@JsonIgnore
-	//@JsonIgnoreProperties("hibernateLazyInitializer")
-	@ManyToOne//(fetch = FetchType.LAZY)
-	@Valid
-	@ConvertGroup(to = Groups.CozinhaId.class)
-	@NotNull
+	
+	@ManyToOne
 	@JoinColumn(name = "cozinha_codigo", nullable = false)
 	private Cozinha cozinha;
 	
@@ -66,6 +58,8 @@ public class Restaurante {
 	
 	@Embedded
 	private Endereco endereco;
+	
+	private boolean ativo = Boolean.TRUE;
 	
 	@CreationTimestamp
 	@Column(nullable = false, columnDefinition = "datetime")
@@ -78,6 +72,13 @@ public class Restaurante {
 	@ManyToMany
 	@JoinTable(name = "restaurante_forma_pagamento", joinColumns = @JoinColumn(name = "restaurante_id"), 
 	inverseJoinColumns = @JoinColumn(name = "forma_pagamento_id"))
-	private List<Forma_Pagamento> formasPagamento = new ArrayList<>();
+	private List<FormaPagamento> formasPagamento = new ArrayList<>();
 	
+	public void ativar() {
+		setAtivo(true);
+	}
+	
+	public void inativar() {
+		setAtivo(false);
+	}
 }

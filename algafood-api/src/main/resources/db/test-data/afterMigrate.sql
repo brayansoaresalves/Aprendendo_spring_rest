@@ -12,6 +12,7 @@ delete from restaurante;
 delete from restaurante_forma_pagamento;
 delete from usuario;
 delete from usuario_grupo;
+delete from restaurante_usuario_responsavel;
 
 set foreign_key_checks = 0;
 
@@ -42,11 +43,11 @@ insert into cidades (nome, estado_id) values ('CACHOEIRA DOURADA', 1);
 insert into cidades (nome, estado_id) values ('UBERLÃNDIA', 2);
 insert into cidades (nome, estado_id) values ('MATÃO', 3);
 
-insert into restaurante (nome, taxa_frete, cozinha_codigo, data_cadastro, data_atualizacao,ativo, endereco_cidade_id, endereco_cep, endereco_logradouro, endereco_numero, endereco_bairro) values ('Thai Gourmet', 4, 1, utc_timestamp, utc_timestamp, true, 1, '38400-999', 'Rua João Pinheiro', '1000', 'Centro');
-insert into restaurante (nome, taxa_frete, cozinha_codigo, data_cadastro, data_atualizacao, ativo) values ('Thai Delivery', 9.50, 1, utc_timestamp, utc_timestamp, true);
-insert into restaurante (nome, taxa_frete, cozinha_codigo, data_cadastro, data_atualizacao, ativo) values ('Tuk Tuk Comida Indiana', 15, 2, utc_timestamp, utc_timestamp, true);
-insert into restaurante (nome, taxa_frete, cozinha_codigo, data_cadastro, data_atualizacao, ativo) values ('YUKIHIRA', 6.12, 4, utc_timestamp, utc_timestamp, true);
-insert into restaurante (nome, taxa_frete, cozinha_codigo, data_cadastro, data_atualizacao, ativo) values ('TADOKORO', 11.0, 5, utc_timestamp, utc_timestamp, true);
+insert into restaurante (nome, taxa_frete, cozinha_codigo, data_cadastro, data_atualizacao,ativo, abertura, endereco_cidade_id, endereco_cep, endereco_logradouro, endereco_numero, endereco_bairro) values ('Thai Gourmet', 4, 1, utc_timestamp, utc_timestamp, true, true, 1, '38400-999', 'Rua João Pinheiro', '1000', 'Centro');
+insert into restaurante (nome, taxa_frete, cozinha_codigo, data_cadastro, data_atualizacao, ativo, abertura) values ('Thai Delivery', 9.50, 1, utc_timestamp, utc_timestamp, true, true);
+insert into restaurante (nome, taxa_frete, cozinha_codigo, data_cadastro, data_atualizacao, ativo, abertura) values ('Tuk Tuk Comida Indiana', 15, 2, utc_timestamp, utc_timestamp, true, true);
+insert into restaurante (nome, taxa_frete, cozinha_codigo, data_cadastro, data_atualizacao, ativo, abertura) values ('YUKIHIRA', 6.12, 4, utc_timestamp, utc_timestamp, true, true);
+insert into restaurante (nome, taxa_frete, cozinha_codigo, data_cadastro, data_atualizacao, ativo, abertura) values ('TADOKORO', 11.0, 5, utc_timestamp, utc_timestamp, true, true);
 
 insert into forma_pagamento (descricao) values ('A VISTA');
 insert into forma_pagamento (descricao) values ('DINHEIRO');
@@ -84,3 +85,11 @@ insert into usuario (id, nome, email, senha, data_cadastro) values
 (2, 'Maria Joaquina', 'maria.vnd@algafood.com', '123', utc_timestamp),
 (3, 'José Souza', 'jose.aux@algafood.com', '123', utc_timestamp),
 (4, 'Sebastião Martins', 'sebastiao.cad@algafood.com', '123', utc_timestamp); 
+
+insert into grupo_permissao (grupo_id, permissao_id) values (1, 1), (1, 2), (2, 1), (2, 2), (3, 1); 
+insert into usuario_grupo (usuario_id, grupo_id) values (1, 1), (1, 2), (2, 2);
+
+insert into usuario (id, nome, email, senha, data_cadastro) values
+(5, 'Manoel Lima', 'manoel.loja@gmail.com', '123', utc_timestamp);
+
+insert into restaurante_usuario_responsavel (restaurante_id, usuario_id) values (1, 5), (3, 5);

@@ -10,6 +10,7 @@ import com.algaworks.algafood.domain.exception.FormaPagamentoNaoEncontradoExcept
 import com.algaworks.algafood.domain.exception.GrupoNaoEncontradoException;
 import com.algaworks.algafood.domain.exception.NegocioException;
 import com.algaworks.algafood.domain.model.Grupo;
+import com.algaworks.algafood.domain.model.Permissao;
 import com.algaworks.algafood.domain.repository.GrupoRepository;
 
 @Service
@@ -20,6 +21,9 @@ public class CadastroGrupoService {
 	
 	@Autowired
 	private GrupoRepository grupoRepository;
+	
+	@Autowired
+	private CadastroPermissaoService cadastroPermissaoService;
 	
 	public Grupo buscarOuFalhar(Long id) {
 		return grupoRepository.findById(id).orElseThrow(
@@ -43,6 +47,22 @@ public class CadastroGrupoService {
 		}catch (DataIntegrityViolationException e) {
 			throw new NegocioException(MSG_GRUPO_EM_USO);
 		}
+	}
+	
+	@Transactional
+	public void associarPermissao(Long permissaoId, Long grupoId) {
+		Grupo grupo = buscarOuFalhar(grupoId);
+		Permissao permissao = cadastroPermissaoService.buscarOuFalhar(permissaoId);
+		
+		grupo.adicionarPermissao(permissao);
+	}
+	
+	@Transactional
+	public void desassociarPermissao(Long permissaoId, Long grupoId) {
+		Grupo grupo = buscarOuFalhar(grupoId);
+		Permissao permissao = cadastroPermissaoService.buscarOuFalhar(permissaoId);
+		
+		grupo.removerPermissao(permissao);
 	}
 
 }

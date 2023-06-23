@@ -28,6 +28,7 @@ import com.algaworks.algafood.domain.exception.CidadeNaoEncontradaException;
 import com.algaworks.algafood.domain.exception.CozinhaNaoEncontradaException;
 import com.algaworks.algafood.domain.exception.EntidadeNaoEncontradaException;
 import com.algaworks.algafood.domain.exception.NegocioException;
+import com.algaworks.algafood.domain.exception.RestauranteNaoEncontradoException;
 import com.algaworks.algafood.domain.model.Cozinha;
 import com.algaworks.algafood.domain.model.Restaurante;
 import com.algaworks.algafood.domain.repository.RestauranteRepository;
@@ -113,6 +114,20 @@ public class RestauranteController {
 		cadastroRestaurante.inativar(restauranteId);
 	}
 	
+	@PutMapping("/{restauranteId}/abertura")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void abrirRestaurante(@PathVariable Long restauranteId) {
+		cadastroRestaurante.abertura(restauranteId);
+		
+	}
+	
+	@PutMapping("/{restauranteId}/fechamento")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void fecharRestaurante(@PathVariable Long restauranteId) {
+		cadastroRestaurante.fechamento(restauranteId);
+		
+	}
+	
 	
 	@DeleteMapping("/{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
@@ -120,55 +135,26 @@ public class RestauranteController {
 		cadastroRestaurante.remover(buscarPorId(id).getId());
 	}
 
-	/*@PatchMapping("/{id}")
-	public Restaurante atualizarParcial(@RequestBody Map<String, Object> campos, @PathVariable Long id, HttpServletRequest request){
-		Restaurante restauranteAtual = cadastroRestaurante.buscarOuFalhar(id);
-		
-		merge(campos, restauranteAtual, request);
-		validate(restauranteAtual, "restaurante");
-		
-		return atualizar(restauranteAtual, id);
-	}*/
-
-	/*private void validate(Restaurante restaurante, String objectName) {
-		// TODO Auto-generated method stub
-		
-		BeanPropertyBindingResult bindResult = new BeanPropertyBindingResult(restaurante, objectName);
-		
-		validator.validate(restaurante, bindResult);
-		
-		if (bindResult.hasErrors()) {
-			throw new ValidacaoException(bindResult);
+	@PutMapping("/ativacoes")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void ativarMultiplos(@RequestBody List<Long> restaurantesIds) {
+		try {
+			cadastroRestaurante.ativar(restaurantesIds);
+		}catch (RestauranteNaoEncontradoException e) {
+			throw new NegocioException(e.getMessage(), e);
 		}
 		
 	}
-
-	private void merge(Map<String, Object> camposOrigem, Restaurante restauranteDestino, HttpServletRequest request) {
-		
-		ServletServerHttpRequest serverHttpRequest = new ServletServerHttpRequest(request);
-		
+	
+	@DeleteMapping("/ativacoes")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void desativarMultiplos(@RequestBody List<Long> restaurantesIds) {
 		try {
-			ObjectMapper objectMapper = new ObjectMapper();
-			
-			objectMapper.configure(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES, true);
-			objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true);
-			
-			Restaurante restauranteOrigem = objectMapper.convertValue(camposOrigem, Restaurante.class);
-			
-			camposOrigem.forEach((nome, valor) -> {
-				Field field = ReflectionUtils.findField(Restaurante.class, nome);
-				field.setAccessible(true);
-				
-				Object novoValor = ReflectionUtils.getField(field, restauranteOrigem);
-				
-				System.out.println(nome + " = " + valor + " = " + novoValor);
-				
-				ReflectionUtils.setField(field, restauranteDestino, novoValor);
-			});
-		}catch (IllegalArgumentException e) {
-			Throwable rootCause = ExceptionUtils.getRootCause(e);
-			throw new HttpMessageNotReadableException(e.getMessage(), rootCause, serverHttpRequest);
+			cadastroRestaurante.inativar(restaurantesIds);
+		}catch (RestauranteNaoEncontradoException e) {
+			throw new NegocioException(e.getMessage(), e);
 		}
-	}*/
+		
+	}
 	
 }

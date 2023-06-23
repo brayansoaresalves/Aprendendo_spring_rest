@@ -39,7 +39,7 @@ import lombok.EqualsAndHashCode;
 	    private Endereco enderecoEntrega;
 	    
 	    @Enumerated(EnumType.STRING)
-	    private StatusPedido status;
+	    private StatusPedido status = StatusPedido.CRIADO;
 	    
 	    @CreationTimestamp
 	    private OffsetDateTime dataCriacao;
@@ -63,5 +63,17 @@ import lombok.EqualsAndHashCode;
 	    @OneToMany(mappedBy = "pedido")
 	    private List<ItemPedido> itens = new ArrayList<>();
 
-	
+	    private void calculaTotal() {
+	    	this.subtotal = getItens().stream().map(item -> item.getPrecoTotal()).reduce(BigDecimal.ZERO, 
+	    			BigDecimal::add);
+	    	this.valorTotal = this.subtotal.add(this.taxaFrete);
+	    }
+	    
+	    private void definirFrete() {
+	    	setTaxaFrete(getRestaurante().getTaxaFrete());
+	    }
+	    
+	    private void atribuirPedidosAosItens() {
+	    	getItens().forEach(item -> item.setPedido(this));
+	    }
 }

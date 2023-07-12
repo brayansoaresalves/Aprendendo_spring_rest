@@ -52,7 +52,7 @@ public class PedidoController {
 	@Autowired
 	private PedidoInputDisassembler pedidoInputDisassembler;
 	
-	
+	/*
 	@GetMapping
 	public MappingJacksonValue listar(@RequestParam (required = false) String campos){
 		List<Pedido> pedidos = pedidoRepository.findAll();
@@ -71,14 +71,14 @@ public class PedidoController {
 		
 		pedidoWrapper.setFilters(filterProvider);
 		return pedidoWrapper;
-	}
+	}*/
 	
 	
-	/*
+	
 	@GetMapping
 	public List<PedidoResumoModel> consultarPedidos(){
 		return pedidoResumoModelAssembler.toCollectionToModel(pedidoRepository.findAll());
-	}*/
+	}
 	
 	@GetMapping("/{codigoPedido}")
 	public PedidoModel buscarPedido(@PathVariable String codigoPedido) {
